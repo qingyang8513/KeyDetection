@@ -21,7 +21,7 @@ void InitSignalHanler(void) {
   signal(SIGINT, SignalHandler);   // Ctrl + c
   signal(SIGTERM, SignalHandler);  // kill -15
 #ifdef __linux__
-  signal(SIGTSTP, SignalHandler);  // Ctrl + c (cannot be caught or ignored)
+  signal(SIGTSTP, SignalHandler);  // Ctrl + z (cannot be caught or ignored)
   signal(SIGKILL, SignalHandler);  // kill -9 (cannot be caught or ignored)
 #endif
 }
