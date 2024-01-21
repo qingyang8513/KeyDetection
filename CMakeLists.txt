@@ -1,22 +1,42 @@
-# The minimum version required to use Qt5 is CMake 2.8.3, but 2.8.11 is recommended.
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.14)
 
-project(KeyDetection)
-set(AppName KeyDetection)
+include(cmake/prelude.cmake)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+project(
+  KeyDetection
+  VERSION 0.1.0
+  DESCRIPTION "Keyboard Detection Test"
+  HOMEPAGE_URL "https://example.com/"
+  LANGUAGES CXX)
 
-set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-message(STATUS "Output path: ${EXECUTABLE_OUTPUT_PATH}")
+include(cmake/project-is-top-level.cmake)
+include(cmake/variables.cmake)
 
-include_directories(
-        ${CMAKE_CURRENT_SOURCE_DIR}
-		${CMAKE_CURRENT_SOURCE_DIR}/include)
-		
-file(GLOB app_header "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
+include_directories(${PROJECT_SOURCE_DIR}/include)
 
-file(GLOB app_src "${CMAKE_CURRENT_SOURCE_DIR}/src/*.c*")
+# ---- Declare executable ----
+file(GLOB HEADERS ${PROJECT_SOURCE_DIR}/include/key-detector/*.h*)
+file(GLOB SRCS ${PROJECT_SOURCE_DIR}/source/key-detector/*.c*
+     ${PROJECT_SOURCE_DIR}/source/main.cpp)
 
-set(SRC ${app_src} ${app_header})
+set(SOURCES ${HEADERS} ${SRCS})
 
-add_executable(${AppName} ${SRC})
+add_executable(KeyDetection_exe ${SOURCES})
+add_executable(KeyDetection::exe ALIAS KeyDetection_exe)
+set_property(TARGET KeyDetection_exe PROPERTY OUTPUT_NAME KeyDetection)
+target_compile_features(KeyDetection_exe PRIVATE cxx_std_17)
+
+# ---- Install rules ----
+if(NOT CMAKE_SKIP_INSTALL_RULES)
+  include(cmake/install-rules.cmake)
+endif()
+
+# ---- Developer mode ----
+if(NOT KeyDetection_DEVELOPER_MODE)
+  return()
+elseif(NOT PROJECT_IS_TOP_LEVEL)
+  message(
+    AUTHOR_WARNING "Developer mode is intended for developers of KeyDetection")
+endif()
+
+include(cmake/dev-mode.cmake)
